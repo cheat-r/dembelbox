@@ -3,8 +3,9 @@ import datetime
 from PIL import Image, ImageDraw, ImageFont
 import logging
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from telegram import Update, Bot, BotCommand
+from telegram import Update, Bot
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
+import asyncio
 
 # Логгер чтобы был, убрал httpx чтоб он не срал не какал не писял каждые пять секунд
 logging.getLogger("httpx").setLevel(logging.WARNING)
@@ -70,15 +71,15 @@ plurCount = {
             "3xx":"Триста"
             }
 
-# Команда для запуска расписания (ежедневно в полночь по времени хоста)
-# ВЫПОЛНЯТЬ ПРИ КАЖДОМ ЗАПУСКЕ СКРИПТА (извините за костыль)
+# Не знаю, кому может это понадобиться, можно её вообще вырезать, лол
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    try:
-        scheduler.start()
-        await context.bot.send_message(chat_id=update.effective_chat.id, text="Таймер запущен. Судьба неизбежна. The fog is coming.")
-    except:
-        await context.bot.send_message(chat_id=update.effective_chat.id, text="Спасибо, я уже завёлся.")
+    await context.bot.send_message(chat_id=update.effective_chat.id, text="Часики тикают. Судьба неизбежна. The fog is coming.\nХотите узнать точное время до анонсов в канале - используйте /howmuch.")
 
+# Чуть менее костыль для запуска расписания
+async def start_countdown():
+    scheduler.start()
+
+# Отсчёт до дембеля в реальном времени (на момент запроса)
 async def howmuch(update: Update, context: ContextTypes.DEFAULT_TYPE):
     much = datetime.datetime(2025, 12, 20) - datetime.datetime.now()
     left = (datetime.datetime(2024, 12, 20) - datetime.datetime.now()) * -1
@@ -155,4 +156,5 @@ if __name__ == '__main__':
     howmuch_handler = CommandHandler('howmuch', howmuch)
     application.add_handler(start_handler)
     application.add_handler(howmuch_handler)
+    asyncio.get_event_loop().create_task(start_countdown())
     application.run_polling()
