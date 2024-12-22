@@ -138,9 +138,9 @@ scheduler = AsyncIOScheduler()
 scheduler.add_job(
     countdown,
     trigger='cron',
-    hour='02',
-    minute='56',
-    second='10'
+    hour='00',
+    minute='00',
+    second='00'
 )
 
 # Запуск бота. Можно убить на CTRL + C, но кто я такой, чтобы вас учить?
