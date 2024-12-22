@@ -3,7 +3,7 @@ import datetime
 from PIL import Image, ImageDraw, ImageFont
 import logging
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from telegram import Update, Bot
+from telegram import Update, Bot, BotCommand
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
 # Логгер чтобы был, убрал httpx чтоб он не срал не какал не писял каждые пять секунд
@@ -19,7 +19,7 @@ bot = Bot(token=token)
 
 # Я уже вставил нужный канал, но можно вставить и другой (только добавь туда бота заранее)
 # Важно, чтобы формат был именно Bot API, а не Telegram API (разница в -100 в начале айди каналов. я сам без понятия.)
-channel = -1002016542799
+channel = -1001760814576
 
 # Здесь дата уже стоит, но по желанию можно поставить свою
 deltaStart = (datetime.datetime(2024, 12, 20) - datetime.datetime.now()).days*-1
@@ -79,6 +79,11 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     except:
         await context.bot.send_message(chat_id=update.effective_chat.id, text="Спасибо, я уже завёлся.")
 
+async def howmuch(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    much = datetime.datetime(2025, 12, 20) - datetime.datetime.now()
+    left = (datetime.datetime(2024, 12, 20) - datetime.datetime.now()) * -1
+    await update.message.reply_text(text=f"До дембеля (20 декабря 2025 0:00 МСК) осталось {much.days} дн., {much.seconds//3600} ч., {much.seconds%3600//60} мин., {much.seconds%60} сек. В процентах это {(left.days*86400+left.seconds)*100/(365*86400)}%")
+
 async def countdown():
     # Завершение работы улицы сезам
     if deltaStart == 366:
@@ -131,7 +136,7 @@ async def countdown():
 
     image.save(fp=("img/coming.png"))
 
-    await bot.send_photo(chat_id=channel, photo=open("img/coming.png", "rb"), caption=(f'До дембеля {plurLeft.lower()} {deltaFinish} {plurDay.lower()} (пройдено {round(deltaStart/365*100,2)}%)'))
+    await bot.send_photo(chat_id=channel, photo=open("img/coming.png", "rb"), caption=(f'До дембеля {plurLeft.lower()} {deltaFinish} {plurDay.lower()} (пройдено {round((deltaStart-1)/365*100,2)}%)'))
 
 # Создание расписания (можно установить своё время)
 scheduler = AsyncIOScheduler()
@@ -147,5 +152,7 @@ scheduler.add_job(
 if __name__ == '__main__':
     application = ApplicationBuilder().token(token).build()
     start_handler = CommandHandler('start', start)
+    howmuch_handler = CommandHandler('howmuch', howmuch)
     application.add_handler(start_handler)
+    application.add_handler(howmuch_handler)
     application.run_polling()
