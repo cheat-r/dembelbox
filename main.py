@@ -16,6 +16,11 @@ logging.basicConfig(
 
 # Не забудь вставить токен в token.txt
 token = open('token.txt', 'r').readline()
+
+# Я ненавижу Linux.
+if '/n' in token:
+    token = token[:-2]
+
 bot = Bot(token=token)
 
 # Я уже вставил нужный канал, но можно вставить и другой (только добавь туда бота заранее)
@@ -79,7 +84,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def start_countdown():
     scheduler.start()
 
-# Отсчёт до дембеля в реальном времени (на момент запроса)
+# Отсчёт до дембеля в реальном времени (на момент запроса) ((работает в ЛС и в чате, НЕ В САМОМ КАНАЛЕ))
 async def howmuch(update: Update, context: ContextTypes.DEFAULT_TYPE):
     much = datetime.datetime(2025, 12, 20) - datetime.datetime.now()
     left = (datetime.datetime(2024, 12, 20) - datetime.datetime.now()) * -1
