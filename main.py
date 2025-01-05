@@ -27,10 +27,6 @@ bot = Bot(token=token)
 # Важно, чтобы формат был именно Bot API, а не Telegram API (разница в -100 в начале айди каналов. я сам без понятия.)
 channel = -1001760814576
 
-# Здесь дата уже стоит, но по желанию можно поставить свою
-deltaStart = (datetime.datetime(2024, 12, 20) - datetime.datetime.now()).days*-1
-deltaFinish = (datetime.datetime(2025, 12, 20) - datetime.datetime.now()).days+1
-
 plurCount = {
             0:"Нулевого",
             1:"Первого",
@@ -91,6 +87,10 @@ async def howmuch(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(text=f"До дембеля (20 декабря 2025 0:00 МСК) осталось {much.days} дн., {much.seconds//3600} ч., {much.seconds%3600//60} мин., {much.seconds%60} сек. В процентах это {(left.days*86400+left.seconds)*100/(365*86400)}%")
 
 async def countdown():
+    # Здесь дата уже стоит, но по желанию можно поставить свою
+    deltaStart = (datetime.datetime(2024, 12, 20) - datetime.datetime.now()).days*-1
+    deltaFinish = (datetime.datetime(2025, 12, 20) - datetime.datetime.now()).days+1
+
     # Завершение работы улицы сезам
     if deltaStart == 366:
         await bot.send_photo(chat_id=channel, photo=open("img/fate.png", "rb"), caption=('Дембель.'))
