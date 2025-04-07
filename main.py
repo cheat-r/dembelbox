@@ -136,6 +136,8 @@ async def countdown():
                 thirdNum = str(deltaStart)[-3]
                 if secondNum == '0':
                     count = plurCount[thirdNum+'xx'].upper()+' '+plurCount[firstNum].upper()
+                elif int(secondNum + str(firstNum)) in plurCount:
+                    count = plurCount[thirdNum+'xx'].upper()+' '+plurCount[int(secondNum+str(firstNum))].upper()
                 else:
                     count = plurCount[thirdNum+'xx'].upper()+' '+plurCount[secondNum+'x'].upper()+' '+plurCount[firstNum].upper()
         else:
