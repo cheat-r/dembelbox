@@ -19,8 +19,8 @@ logging.basicConfig(
 token = open('token.txt', 'r').readline()
 
 # Это фикс для Linux.
-if '/n' in token:
-    token = token[:-2]
+if '\n' in token:
+    token = token[:-1]
 
 bot = Bot(token=token)
 
